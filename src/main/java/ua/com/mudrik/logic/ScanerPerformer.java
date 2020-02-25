@@ -9,6 +9,7 @@ import jssc.SerialPort;
 import jssc.SerialPortEvent;
 import jssc.SerialPortEventListener;
 import jssc.SerialPortException;
+import ua.com.mudrik.dao.ScanBugDAO;
 import ua.com.mudrik.dao.ScanDAO;
 
 /**
@@ -47,6 +48,7 @@ public class ScanerPerformer {
 
         @Override
         public void serialEvent(SerialPortEvent event) {
+            Integer position = 1;
             if (event.isRXCHAR() && event.getEventValue() > 0) {
                 //        && !"".equals(event.getEventValue())) {
                 ScanDAO sDao = new ScanDAO();
@@ -57,9 +59,13 @@ public class ScanerPerformer {
                     //Long codeInt = Long.parseLong(codeStr);
                     serialData = serialData.concat(codeStr);
                     if (codeStr.contains("\r")) {
-                        serialData = serialData.replaceAll("[^\\d.]", "");
-                        sDao.createNewScanRec(nameStr, serialData);
+                        //serialData = serialData.replaceAll("[^\\d.]", ""); //----------------------------------------------------
+                        sDao.createNewScanRec(nameStr, serialData, position);
                         serialData = "";
+                        position++;
+                        if (position > 3) {
+                            position = 1;
+                        }
                     }
 
                 } catch (Exception e) {
@@ -74,9 +80,10 @@ public class ScanerPerformer {
 
         @Override
         public void serialEvent(SerialPortEvent event) {
+            Integer position = 1;
             if (event.isRXCHAR() && event.getEventValue() > 0) {
                 //        && !"".equals(event.getEventValue())) {
-                ScanDAO sDao = new ScanDAO();
+                ScanBugDAO sDao = new ScanBugDAO();
                 try {
                     //String codeStr = new String(serialPort.readBytes()).replaceAll("[^\\d.]", "");
                     String codeStr = new String(serialPort.readBytes());
@@ -84,9 +91,13 @@ public class ScanerPerformer {
                     //Long codeInt = Long.parseLong(codeStr);
                     serialData = serialData.concat(codeStr);
                     if (codeStr.contains("\r")) {
-                        serialData = serialData.replaceAll("[^\\d.]", "");
-                        sDao.createNewScanRec(nameStr, serialData);
+                        //serialData = serialData.replaceAll("[^\\d.]", ""); //----------------------------------------------------
+                        sDao.createNewScanBugRec(nameStr, serialData);
                         serialData = "";
+                        position++;
+                        if (position > 3) {
+                            position = 1;
+                        }
                     }
 
                 } catch (Exception e) {

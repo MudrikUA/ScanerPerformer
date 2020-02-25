@@ -27,6 +27,15 @@ public class SettingsDAO {
         return settings;
     }
 
+    public List<Settings> getComPortsForBugNameSetting() {
+        session = ScanUtil.getSessionFactory().openSession();
+        Query query = session.createQuery("from Settings where settingName = :settingName");
+        query.setParameter("settingName", "ComForBugsList");
+        List<Settings> settings = query.list();
+        session.close();
+        return settings;
+    }
+
     public Settings findSettingByName(String paramName) {
         session = ScanUtil.getSessionFactory().openSession();
         Query query = session.createQuery("from Settings where settingName = :settingName");

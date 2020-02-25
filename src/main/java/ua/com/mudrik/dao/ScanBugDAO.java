@@ -6,24 +6,23 @@
 package ua.com.mudrik.dao;
 
 import org.hibernate.Session;
-import ua.com.mudrik.dto.Scan;
+import ua.com.mudrik.dto.ScanBug;
 
 /**
  *
  * @author Mudrik
  */
-public class ScanDAO {
+public class ScanBugDAO {
 
     private Session session;
 
-    public void createNewScanRec(String scanerName, String scanerCode, Integer position) {
+    public void createNewScanBugRec(String scanerName, String scanerCode) {
         session = ScanUtil.getSessionFactory().openSession();
         session.beginTransaction();
-        Scan sc = new Scan();
-        sc.setScanCode(scanerCode);
-        sc.setScanerName(scanerName);
-        sc.setScanPosition(position);
-        session.save(sc);
+        ScanBug scb = new ScanBug();
+        scb.setScanCode(scanerCode);
+        scb.setScanerName(scanerName);
+        session.save(scb);
         session.getTransaction().commit();
         session.close();
     }

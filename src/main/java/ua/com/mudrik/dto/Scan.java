@@ -43,6 +43,9 @@ public class Scan implements Serializable {
     @Temporal(javax.persistence.TemporalType.TIMESTAMP)
     private Date creationDate;
 
+    @Column(name = "scan_pos")
+    private Integer scanPosition;
+
     @Column(name = "scaner_desc", length = 256)
     private String scanerDesc;
 
@@ -80,6 +83,14 @@ public class Scan implements Serializable {
 
     public void setCreationDate(Date creationDate) {
         this.creationDate = creationDate;
+    }
+
+    public Integer getScanPosition() {
+        return scanPosition;
+    }
+
+    public void setScanPosition(Integer scanPosition) {
+        this.scanPosition = scanPosition;
     }
 
     public String getScanerDesc() {
