@@ -5,9 +5,12 @@ import java.util.Date;
 import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.UniqueConstraint;
@@ -22,29 +25,35 @@ import javax.persistence.UniqueConstraint;
  * @author Mudrik
  */
 @Entity
-@Table(name = "ScanBugRecords", uniqueConstraints = {
+@Table(name = "scan_bug_records", uniqueConstraints = {
     @UniqueConstraint(columnNames = "ID")})
 public class ScanBug implements Serializable {
 
-    private static final long serialVersionUID = -1798070786993154676L;
+    private static final long serialVersionUID = -1798070738699354676L;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "ID", unique = true, nullable = false)
     private Integer id;
 
-    @Column(name = "scaner_name", nullable = false, length = 100)
-    private String scanerName;
-
-    @Column(name = "scan_code", nullable = false, length = 100)
-    private String scanCode;
+    @Column(name = "indexVal")
+    private Integer index;
 
     @Column(name = "createdDate")
     @Temporal(javax.persistence.TemporalType.TIMESTAMP)
     private Date creationDate;
 
-    @Column(name = "scaner_desc", length = 256)
-    private String scanerDesc;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "panel_c")
+    private Scan currentPanel;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "panel_l")
+    private Scan leftPanel;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "panel_r")
+    private Scan rightPanel;
 
     public ScanBug() {
         creationDate = new Date();
@@ -58,22 +67,6 @@ public class ScanBug implements Serializable {
         this.id = id;
     }
 
-    public String getScanerName() {
-        return scanerName;
-    }
-
-    public void setScanerName(String scanerName) {
-        this.scanerName = scanerName;
-    }
-
-    public String getScanCode() {
-        return scanCode;
-    }
-
-    public void setScanCode(String scanCode) {
-        this.scanCode = scanCode;
-    }
-
     public Date getCreationDate() {
         return creationDate;
     }
@@ -82,12 +75,36 @@ public class ScanBug implements Serializable {
         this.creationDate = creationDate;
     }
 
-    public String getScanerDesc() {
-        return scanerDesc;
+    public Integer getIndex() {
+        return index;
     }
 
-    public void setScanerDesc(String scanerDesc) {
-        this.scanerDesc = scanerDesc;
+    public void setIndex(Integer index) {
+        this.index = index;
+    }
+
+    public Scan getLeftPanel() {
+        return leftPanel;
+    }
+
+    public void setLeftPanel(Scan leftPanel) {
+        this.leftPanel = leftPanel;
+    }
+
+    public Scan getRightPanel() {
+        return rightPanel;
+    }
+
+    public void setRightPanel(Scan rightPanel) {
+        this.rightPanel = rightPanel;
+    }
+
+    public Scan getCurrentPanel() {
+        return currentPanel;
+    }
+
+    public void setCurrentPanel(Scan currentPanel) {
+        this.currentPanel = currentPanel;
     }
 
     @Override
@@ -114,6 +131,7 @@ public class ScanBug implements Serializable {
 
     @Override
     public String toString() {
-        return "ScanBug{" + "id=" + id + ", scanerName=" + scanerName + ", scanCode=" + scanCode + ", creationDate=" + creationDate + ", scanerDesc=" + scanerDesc + '}';
+        return "ScanBug{" + "id=" + id + ", index=" + index + ", creationDate=" + creationDate + ", currentPanel=" + currentPanel + ", leftPanel=" + leftPanel + ", rightPanel=" + rightPanel + '}';
     }
+
 }

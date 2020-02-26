@@ -10,7 +10,6 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import jssc.SerialPortException;
-import org.hibernate.Session;
 import ua.com.mudrik.dto.Settings;
 import ua.com.mudrik.dao.SettingsDAO;
 

@@ -5,12 +5,18 @@
  */
 package ua.com.mudrik.logic;
 
+import java.util.HashMap;
+import java.util.Map;
 import jssc.SerialPort;
 import jssc.SerialPortEvent;
 import jssc.SerialPortEventListener;
 import jssc.SerialPortException;
 import ua.com.mudrik.dao.ScanBugDAO;
 import ua.com.mudrik.dao.ScanDAO;
+import ua.com.mudrik.dao.ScanDuplicateDAO;
+import ua.com.mudrik.dao.SettingsDAO;
+import ua.com.mudrik.dto.Scan;
+import ua.com.mudrik.dto.Settings;
 
 /**
  *
@@ -20,12 +26,14 @@ public class ScanerPerformer {
 
     private SerialPort serialPort;
     private String serialData;
+    private Map<String, Integer> panelPos = new HashMap<String, Integer>();
 
     public ScanerPerformer() {
 
     }
 
     public void setupComConnection(String portName, int baudrate, int databits, int stopbits, int parity, boolean isBugScaner) throws SerialPortException {
+        System.out.println("ua.com.mudrik.logic.ScanerPerformer.setupComConnection()");
         serialPort = new SerialPort(portName);
         try {
             serialData = "";
@@ -44,34 +52,65 @@ public class ScanerPerformer {
         }
     }
 
+    private String getNameOfComPort(String comPort) {
+        SettingsDAO sDao = new SettingsDAO();
+        String settingName = comPort + "Name";
+        Settings comPortNameSetting = sDao.findSettingByName(settingName);
+        if (comPortNameSetting != null) {
+            return comPortNameSetting.getSettingParam();
+        }
+        return comPort;
+    }
+
+    private Scan getScanByScanCode(String scanCode) {
+        ScanDAO sDao = new ScanDAO();
+        Scan scan = sDao.findScanByScanCode(scanCode);
+        return scan;
+    }
+
+    private Scan getScanById(Integer id) {
+        ScanDAO sDao = new ScanDAO();
+        Scan scan = sDao.findScanById(id);
+        return scan;
+    }
+
     private class PortEventListenerForScaner implements SerialPortEventListener {
 
         @Override
         public void serialEvent(SerialPortEvent event) {
-            Integer position = 1;
             if (event.isRXCHAR() && event.getEventValue() > 0) {
-                //        && !"".equals(event.getEventValue())) {
-                ScanDAO sDao = new ScanDAO();
                 try {
-                    //String codeStr = new String(serialPort.readBytes()).replaceAll("[^\\d.]", "");
                     String codeStr = new String(serialPort.readBytes());
-                    String nameStr = serialPort.getPortName();
-                    //Long codeInt = Long.parseLong(codeStr);
+                    String comNameStr = serialPort.getPortName();
                     serialData = serialData.concat(codeStr);
                     if (codeStr.contains("\r")) {
-                        //serialData = serialData.replaceAll("[^\\d.]", ""); //----------------------------------------------------
-                        sDao.createNewScanRec(nameStr, serialData, position);
-                        serialData = "";
-                        position++;
-                        if (position > 3) {
+                        serialData = serialData.replaceAll("\r", "").replaceAll("\n", "");
+                        String laminName = getNameOfComPort(comNameStr);
+                        Scan scanDuplicate = getScanByScanCode(serialData);
+                        Integer position = panelPos.get(comNameStr);
+                        if (position == null) {
+                            panelPos.put(comNameStr, 1);
                             position = 1;
                         }
+                        if (scanDuplicate != null) {
+                            ScanDuplicateDAO scanDuplicateDAO = new ScanDuplicateDAO();
+                            scanDuplicateDAO.createNewScanDupRec(scanDuplicate, serialData, laminName, comNameStr, position);
+                            serialData = "";
+                        } else {
+                            ScanDAO sDao = new ScanDAO();
+                            sDao.createNewScanRec(comNameStr, laminName, serialData, position);
+                            serialData = "";
+                            if (position >= 3) {
+                                panelPos.replace(comNameStr, 1);
+                            } else {
+                                position = position + 1;
+                                panelPos.replace(comNameStr, position);
+                            }
+                        }
                     }
-
                 } catch (Exception e) {
                     System.out.println(e);
                 }
-                //ScanUtil.shutdown();
             }
         }
     }
@@ -80,24 +119,21 @@ public class ScanerPerformer {
 
         @Override
         public void serialEvent(SerialPortEvent event) {
-            Integer position = 1;
             if (event.isRXCHAR() && event.getEventValue() > 0) {
                 //        && !"".equals(event.getEventValue())) {
                 ScanBugDAO sDao = new ScanBugDAO();
                 try {
-                    //String codeStr = new String(serialPort.readBytes()).replaceAll("[^\\d.]", "");
                     String codeStr = new String(serialPort.readBytes());
-                    String nameStr = serialPort.getPortName();
-                    //Long codeInt = Long.parseLong(codeStr);
                     serialData = serialData.concat(codeStr);
                     if (codeStr.contains("\r")) {
-                        //serialData = serialData.replaceAll("[^\\d.]", ""); //----------------------------------------------------
-                        sDao.createNewScanBugRec(nameStr, serialData);
-                        serialData = "";
-                        position++;
-                        if (position > 3) {
-                            position = 1;
+                        serialData = serialData.replaceAll("\r", "").replaceAll("\n", "");
+                        Scan currentPanel = getScanByScanCode(serialData);
+                        if (currentPanel != null) {
+                            Scan leftPanel = currentPanel.getId() > 1 ? getScanById(currentPanel.getId() - 1) : null;
+                            Scan rightPanel = getScanById(currentPanel.getId() + 1);
+                            sDao.createNewScanBugRec(currentPanel, leftPanel, rightPanel);
                         }
+                        serialData = "";
                     }
 
                 } catch (Exception e) {

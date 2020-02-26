@@ -10,11 +10,13 @@
         <property name="hibernate.connection.username">postgres</property> 
         <property name="hibernate.dialect">org.hibernate.dialect.PostgreSQLDialect</property> 
         <property name="show_sql">true</property> 
-        <property name="hbm2ddl.auto">update</property> 
-        <!--<property name="hbm2ddl.auto">none</property>--> 
+        <!--<property name="hbm2ddl.auto">update</property>--> 
+        <!--<property name="hbm2ddl.auto">create</property>--> 
+        <property name="hbm2ddl.auto">none</property> 
         
         <mapping class="ua.com.mudrik.dto.Scan"></mapping> 
         <mapping class="ua.com.mudrik.dto.Settings"></mapping> 
-
+        <mapping class="ua.com.mudrik.dto.ScanBug"></mapping> 
+        <mapping class="ua.com.mudrik.dto.ScanDuplicate"></mapping> 
     </session-factory> 
 </hibernate-configuration> 

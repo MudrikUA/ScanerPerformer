@@ -5,8 +5,11 @@
  */
 package ua.com.mudrik.dao;
 
+import java.util.List;
+import org.hibernate.Query;
 import org.hibernate.Session;
 import ua.com.mudrik.dto.Scan;
+import ua.com.mudrik.dto.Settings;
 
 /**
  *
@@ -16,15 +19,40 @@ public class ScanDAO {
 
     private Session session;
 
-    public void createNewScanRec(String scanerName, String scanerCode, Integer position) {
+    public void createNewScanRec(String scanerName, String laminName, String scanerCode, Integer position) {
         session = ScanUtil.getSessionFactory().openSession();
         session.beginTransaction();
         Scan sc = new Scan();
         sc.setScanCode(scanerCode);
         sc.setScanerName(scanerName);
-        sc.setScanPosition(position);
+        sc.setPanelPosition(position);
+        sc.setLaminName(laminName);
         session.save(sc);
         session.getTransaction().commit();
         session.close();
+    }
+
+    public Scan findScanByScanCode(String scanCode) {
+        session = ScanUtil.getSessionFactory().openSession();
+        Query query = session.createQuery("from Scan where scanCode like :scanCode");
+        query.setParameter("scanCode", "%" + scanCode + "%");
+        List<Scan> scan = query.list();
+        session.close();
+        if (!scan.isEmpty()) {
+            return scan.get(0);
+        }
+        return null;
+    }
+
+    public Scan findScanById(Integer id) {
+        session = ScanUtil.getSessionFactory().openSession();
+        Query query = session.createQuery("from Scan where id = :id");
+        query.setParameter("id", id);
+        List<Scan> scan = query.list();
+        session.close();
+        if (!scan.isEmpty()) {
+            return scan.get(0);
+        }
+        return null;
     }
 }

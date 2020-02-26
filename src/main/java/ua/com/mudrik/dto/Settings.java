@@ -19,7 +19,7 @@ import javax.persistence.UniqueConstraint;
  * @author Mudrik
  */
 @Entity
-@Table(name = "SystemSettings", uniqueConstraints = {
+@Table(name = "system_settings", uniqueConstraints = {
     @UniqueConstraint(columnNames = "ID")})
 public class Settings implements Serializable {
 
@@ -36,7 +36,7 @@ public class Settings implements Serializable {
     @Column(name = "setting_param", nullable = false, length = 100)
     private String settingParam;
     
-    @Column(name = "setting_desc", length = 1024)
+    @Column(name = "setting_desc", length = 512)
     private String settingDesc;
 
     public Settings() {
