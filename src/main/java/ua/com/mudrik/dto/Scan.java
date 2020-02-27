@@ -33,7 +33,7 @@ public class Scan implements Serializable {
     @Column(name = "ID", unique = true, nullable = false)
     private Integer id;
 
-    @Column(name = "indexVal")
+    @Column(name = "index_val")
     private Integer index;
 
     @Column(name = "scaner_name", nullable = false, length = 100)
@@ -42,7 +42,7 @@ public class Scan implements Serializable {
     @Column(name = "scan_code", nullable = false, length = 100)
     private String scanCode;
 
-    @Column(name = "createdDate")
+    @Column(name = "created_date")
     @Temporal(javax.persistence.TemporalType.TIMESTAMP)
     private Date creationDate;
 

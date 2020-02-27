@@ -36,7 +36,7 @@ public class ScanDuplicate implements Serializable {
     @Column(name = "ID", unique = true, nullable = false)
     private Integer id;
 
-    @Column(name = "createdDate")
+    @Column(name = "created_date")
     @Temporal(javax.persistence.TemporalType.TIMESTAMP)
     private Date creationDate;
 

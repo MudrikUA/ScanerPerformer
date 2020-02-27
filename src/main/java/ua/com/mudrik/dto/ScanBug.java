@@ -36,10 +36,10 @@ public class ScanBug implements Serializable {
     @Column(name = "ID", unique = true, nullable = false)
     private Integer id;
 
-    @Column(name = "indexVal")
+    @Column(name = "index_val")
     private Integer index;
 
-    @Column(name = "createdDate")
+    @Column(name = "created_date")
     @Temporal(javax.persistence.TemporalType.TIMESTAMP)
     private Date creationDate;
 
