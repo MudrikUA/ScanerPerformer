@@ -53,14 +53,14 @@ public class Scan implements Serializable {
     private String laminName;
 
     @Column(name = "bd")
-    private Integer duplicateCode;
+    private Integer bugCount;
 
     @Column(name = "res")
     private String reservedData;
 
     public Scan() {
         creationDate = new Date();
-        duplicateCode = 0;
+        bugCount = 0;
     }
 
     public Integer getId() {
@@ -119,12 +119,12 @@ public class Scan implements Serializable {
         this.laminName = laminName;
     }
 
-    public Integer getDuplicateCode() {
-        return duplicateCode;
+    public Integer getBugCount() {
+        return bugCount;
     }
 
-    public void setDuplicateCode(Integer duplicateCode) {
-        this.duplicateCode = duplicateCode;
+    public void setBugCount(Integer bugCount) {
+        this.bugCount = bugCount;
     }
 
     public String getReservedData() {
@@ -159,7 +159,7 @@ public class Scan implements Serializable {
 
     @Override
     public String toString() {
-        return "Scan{" + "id=" + id + ", index=" + index + ", scanerName=" + scanerName + ", scanCode=" + scanCode + ", creationDate=" + creationDate + ", panelPosition=" + panelPosition + ", laminName=" + laminName + ", duplicateCode=" + duplicateCode + ", reservedData=" + reservedData + '}';
+        return "Scan{" + "id=" + id + ", index=" + index + ", scanerName=" + scanerName + ", scanCode=" + scanCode + ", creationDate=" + creationDate + ", panelPosition=" + panelPosition + ", laminName=" + laminName + ", bugCount=" + bugCount + ", reservedData=" + reservedData + '}';
     }
 
 }

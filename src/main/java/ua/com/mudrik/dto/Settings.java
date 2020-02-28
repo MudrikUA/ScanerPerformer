@@ -35,7 +35,7 @@ public class Settings implements Serializable {
 
     @Column(name = "setting_param", nullable = false, length = 100)
     private String settingParam;
-    
+
     @Column(name = "setting_desc", length = 512)
     private String settingDesc;
 

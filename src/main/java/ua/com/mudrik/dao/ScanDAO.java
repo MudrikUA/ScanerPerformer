@@ -9,7 +9,6 @@ import java.util.List;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import ua.com.mudrik.dto.Scan;
-import ua.com.mudrik.dto.Settings;
 
 /**
  *

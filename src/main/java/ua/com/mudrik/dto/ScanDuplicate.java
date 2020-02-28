@@ -109,6 +109,14 @@ public class ScanDuplicate implements Serializable {
         this.duplicateScan = duplicateScan;
     }
 
+    public Boolean getIsNewDupl() {
+        return isNewDupl;
+    }
+
+    public void setIsNewDupl(Boolean isNewDupl) {
+        this.isNewDupl = isNewDupl;
+    }
+
     @Override
     public int hashCode() {
         int hash = 3;
