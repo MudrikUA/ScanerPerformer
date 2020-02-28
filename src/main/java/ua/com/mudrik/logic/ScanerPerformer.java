@@ -23,15 +23,15 @@ import ua.com.mudrik.dto.Settings;
  * @author Mudrik
  */
 public class ScanerPerformer {
-
+    
     private SerialPort serialPort;
     private String serialData;
     private Map<String, Integer> panelPos = new HashMap<String, Integer>();
-
+    
     public ScanerPerformer() {
-
+        
     }
-
+    
     public void setupComConnection(String portName, int baudrate, int databits, int stopbits, int parity, boolean isBugScaner) throws SerialPortException {
         System.out.println("ua.com.mudrik.logic.ScanerPerformer.setupComConnection()");
         serialPort = new SerialPort(portName);
@@ -46,12 +46,12 @@ public class ScanerPerformer {
             } else {
                 serialPort.addEventListener(new PortEventListenerForScaner());
             }
-
+            
         } catch (SerialPortException ex) {
             System.out.println(ex);
         }
     }
-
+    
     private String getNameOfComPort(String comPort) {
         SettingsDAO sDao = new SettingsDAO();
         String settingName = comPort + "Name";
@@ -61,21 +61,26 @@ public class ScanerPerformer {
         }
         return comPort;
     }
-
+    
     private Scan getScanByScanCode(String scanCode) {
         ScanDAO sDao = new ScanDAO();
         Scan scan = sDao.findScanByScanCode(scanCode);
         return scan;
     }
-
+    
     private Scan getScanById(Integer id) {
         ScanDAO sDao = new ScanDAO();
         Scan scan = sDao.findScanById(id);
         return scan;
     }
-
+    
+    private void updateScan(Scan s) {
+        ScanDAO sDao = new ScanDAO();
+        sDao.updateScan(s);
+    }
+    
     private class PortEventListenerForScaner implements SerialPortEventListener {
-
+        
         @Override
         public void serialEvent(SerialPortEvent event) {
             if (event.isRXCHAR() && event.getEventValue() > 0) {
@@ -114,13 +119,12 @@ public class ScanerPerformer {
             }
         }
     }
-
+    
     private class PortEventListenerForScanerBug implements SerialPortEventListener {
-
+        
         @Override
         public void serialEvent(SerialPortEvent event) {
             if (event.isRXCHAR() && event.getEventValue() > 0) {
-                //        && !"".equals(event.getEventValue())) {
                 ScanBugDAO sDao = new ScanBugDAO();
                 try {
                     String codeStr = new String(serialPort.readBytes());
@@ -132,14 +136,16 @@ public class ScanerPerformer {
                             Scan leftPanel = currentPanel.getId() > 1 ? getScanById(currentPanel.getId() - 1) : null;
                             Scan rightPanel = getScanById(currentPanel.getId() + 1);
                             sDao.createNewScanBugRec(currentPanel, leftPanel, rightPanel);
+                            Integer bugCount = currentPanel.getBugCount();
+                            currentPanel.setBugCount(bugCount + 1);
+                            updateScan(currentPanel);
                         }
                         serialData = "";
                     }
-
+                    
                 } catch (Exception e) {
                     System.out.println(e);
                 }
-                //ScanUtil.shutdown();
             }
         }
     }

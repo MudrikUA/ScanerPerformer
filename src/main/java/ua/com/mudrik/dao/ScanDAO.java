@@ -54,4 +54,12 @@ public class ScanDAO {
         }
         return null;
     }
+
+    public void updateScan(Scan scan) {
+        session = ScanUtil.getSessionFactory().openSession();
+        session.beginTransaction();
+        session.update(scan);
+        session.getTransaction().commit();
+        session.close();
+    }
 }
