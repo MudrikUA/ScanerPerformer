@@ -1,8 +1,10 @@
-package ua.com.mudrik.logic;
+
 
 import java.util.Date;
 import java.util.List;
 import jssc.SerialPortException;
+import ua.com.mudrik.logic.ScanerFactory;
+import ua.com.mudrik.logic.ScanerPerformer;
 
 /*
  * To change this license header, choose License Headers in Project Properties.
